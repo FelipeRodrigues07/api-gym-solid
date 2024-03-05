@@ -1,0 +1,53 @@
+//npm i prisma -D
+//npx prisma init //iniciar o prisma
+//npx prisma generate //adicionar a tipagem, integração typescript
+//npm i @prisma/client  //dependencia de desenvolvimento
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  password_hash String
+  created_at    DateTime  @default(now())
+  
+  CheckIn       CheckIn[]  //varios chekins
+
+  @@map("users") //trocar o nome da tabela para users
+}
+
+model CheckIn {
+  id           String    @id @default(uuid())
+  created_at   DateTime  @default(now())
+  validated_at DateTime?
+
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id String
+
+  gym     Gym    @relation(fields: [gym_id], references: [id])
+  gym_id  String
+
+  @@map("check_ins")
+}
+
+model Gym {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  phone       String?
+  latitude    Decimal
+  longitude   Decimal
+  CheckIn     CheckIn[]
+
+  @@map("gyms")
+}
+
+// docker run --name api-solid-pg -e POSTGRESQL_USERNAME=docker -e POSTGRESQL_PASSWORD=docker -e POSTGRESQL_DATABASE=apisolid -p 5432:5432 bitnami/postgresql:latest
