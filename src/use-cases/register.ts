@@ -1,6 +1,6 @@
-import { prisma } from '@/lib/prisma'
+import { UsersRepository } from '@/repositories/users-repository'
 import { hash } from 'bcryptjs'
-import { PrismaUsersRepository } from '@/repositories/prisma-users-repository'
+import { UserAlreadyExistsError } from './errors/user-already-exists-error'
 
 interface RegisterUseCaseRequest {
   name: string
@@ -8,29 +8,30 @@ interface RegisterUseCaseRequest {
   password: string
 }
 
-export async function registerUseCase({
-  name,
-  email,
-  password,
-}: RegisterUseCaseRequest) {
-  const password_hash = await hash(password, 6)
 
-  const userWithSameEmail = await prisma.user.findUnique({
-    where: {
+export class RegisterUseCase {  //cada classe tem um método
+  constructor(private usersRepository: UsersRepository) {}   //receber as dependencia dentro do construtor
+
+  async execute({ name, email, password }: RegisterUseCaseRequest) {
+    const password_hash = await hash(password, 6)
+
+  
+    const userWithSameEmail = await this.usersRepository.findByEmail(email) //passa la para o prisma users repository
+  
+
+    if (userWithSameEmail) {
+      throw new UserAlreadyExistsError()
+    }
+
+                     //recebendo repositorio do construtor
+    await this.usersRepository.create({   //cria o usuario no banco de dados
+      name,
       email,
-    },
-  })
-
-  if (userWithSameEmail) {
-    throw new Error('E-mail already exists.')
+      password_hash,
+    })
   }
-
-
-  const prismaUsersRepository = new PrismaUsersRepository()
-
-  await prismaUsersRepository.create({  //criar no banco de dados
-    name,
-    email,
-    password_hash,
-  })
 }
+
+
+//SOLID
+//D - Dependency inversion Principable
