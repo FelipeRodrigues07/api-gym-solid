@@ -1,6 +1,7 @@
 import { UsersRepository } from '@/repositories/users-repository'
 import { hash } from 'bcryptjs'
 import { UserAlreadyExistsError } from './errors/user-already-exists-error'
+import { User } from '@prisma/client'  //tipagem propria do prisma
 
 interface RegisterUseCaseRequest {
   name: string
@@ -8,11 +9,16 @@ interface RegisterUseCaseRequest {
   password: string
 }
 
+interface RegisterUseCaseResponse {
+  user: User
+}
+
+
 
 export class RegisterUseCase {  //cada classe tem um método
   constructor(private usersRepository: UsersRepository) {}   //receber as dependencia dentro do construtor
-
-  async execute({ name, email, password }: RegisterUseCaseRequest) {
+                                                                    //retorna isso
+  async execute({ name, email, password }: RegisterUseCaseRequest): Promise<RegisterUseCaseResponse> {
     const password_hash = await hash(password, 6)
 
   
@@ -24,11 +30,15 @@ export class RegisterUseCase {  //cada classe tem um método
     }
 
                      //recebendo repositorio do construtor
-    await this.usersRepository.create({   //cria o usuario no banco de dados
+    const user = await this.usersRepository.create({   //cria o usuario no banco de dados
       name,
       email,
       password_hash,
     })
+
+    return {
+      user
+    }
   }
 }
 
