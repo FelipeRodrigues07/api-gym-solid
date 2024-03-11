@@ -5,7 +5,7 @@ import { UsersRepository } from '../users-repository'
 
 export class PrismaUsersRepository implements UsersRepository {
   async findByEmail(email: string) {
-    const user = await prisma.user.findUnique({   //se o email ja existe
+    const user = await prisma.user.findUnique({   // Este comando usa o Prisma para buscar um usuário único no banco de dados onde o campo de e-mail corresponde ao e-mail fornecido.
       where: {
         email,
       },

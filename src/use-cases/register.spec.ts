@@ -1,4 +1,4 @@
-import { expect, describe, it } from 'vitest'
+import { expect, describe, it, beforeEach } from 'vitest'
 import { RegisterUseCase } from './register'
 // import { PrismaUsersRepository } from '@/repositories/Prisma/prisma-users-repository'
 import { compare } from 'bcryptjs'
@@ -7,22 +7,28 @@ import { UserAlreadyExistsError } from '@/use-cases/errors/user-already-exists-e
 
 //unit testing - teste unitário
 
+let usersRepository: InMemoryUsersRepository
+let sut: RegisterUseCase
 
 
 describe('Register Use Case', () => {
 
+  beforeEach(() => {
+    usersRepository = new InMemoryUsersRepository()
+    sut = new RegisterUseCase(usersRepository)
+  })
 
     it('should to register', async () => {  //so testar o cadastro
         const usersRepository = new InMemoryUsersRepository()
         const registerUseCase = new RegisterUseCase(usersRepository)
     
-        const { user } = await registerUseCase.execute({
+        const { user } = await sut.execute({
           name: 'John Doe',
           email: 'johndoe@example.com',
           password: '123456',
         })
     
-        expect(user.id).toEqual(expect.any(String))
+        expect(user.id).toEqual(expect.any(String)) //espero que id do usuário seja igual  qualquer sring
       })
 
 
@@ -33,7 +39,7 @@ describe('Register Use Case', () => {
         const registerUseCase = new RegisterUseCase(usersRepository)   
               
 
-        const { user} = await registerUseCase.execute({
+        const { user } = await sut.execute({
             name: 'John Doe',
             email: "john@gmail.com",
             password: '123456'
@@ -56,14 +62,14 @@ describe('Register Use Case', () => {
     
         const email = 'johndoe@example.com'
     
-        await registerUseCase.execute({
+        await sut.execute({
           name: 'John Doe',
           email,
           password: '123456',
         })
     
-        expect(() =>
-          registerUseCase.execute({
+         await expect(() =>
+         sut.execute({
             name: 'John Doe',
             email,
             password: '123456',

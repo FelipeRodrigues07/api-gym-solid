@@ -21,11 +21,11 @@ export class RegisterUseCase {  //cada classe tem um método
   async execute({ name, email, password }: RegisterUseCaseRequest): Promise<RegisterUseCaseResponse> {
     const password_hash = await hash(password, 6)
 
-  
+   //pega o usário retornado
     const userWithSameEmail = await this.usersRepository.findByEmail(email) //passa la para o prisma users repository
   
 
-    if (userWithSameEmail) {
+    if (userWithSameEmail) { //se o usuario existe
       throw new UserAlreadyExistsError()
     }
 
