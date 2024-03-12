@@ -1,9 +1,16 @@
 import { prisma } from '@/lib/prisma'
-import { Prisma } from '@prisma/client'
+import { Prisma,  User } from '@prisma/client'
 
 import { UsersRepository } from '../users-repository'
 
 export class PrismaUsersRepository implements UsersRepository {
+
+  findById(id: string): Promise<User | null> {
+    throw new Error('Method not implemented.')
+  }
+
+
+
   async findByEmail(email: string) {
     const user = await prisma.user.findUnique({   // Este comando usa o Prisma para buscar um usuário único no banco de dados onde o campo de e-mail corresponde ao e-mail fornecido.
       where: {
