@@ -22,4 +22,4 @@ export class GetUserMetricsUseCase {
   }
 }
 
-//retorna o valor total de chekins feitos pela academia
+//retorna o valor total de chekins feitos pelo usuário
