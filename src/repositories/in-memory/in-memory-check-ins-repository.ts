@@ -38,6 +38,28 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
   }
 
 
+  async findById(id: string) { //pelo id retorna o check-in relacionado
+    const checkIn = this.items.find((item) => item.id === id)
+
+    if (!checkIn) {  //quando não encontra, retorna nulo
+      return null
+    }
+
+    return checkIn
+  }
+
+  async save(checkIn: CheckIn) {//val salva o validated do check-in
+    const checkInIndex = this.items.findIndex((item) => item.id === checkIn.id)
+
+    if (checkInIndex >= 0) {//vai atualizar naquel indice específico
+      this.items[checkInIndex] = checkIn
+    }
+
+    return checkIn
+  }
+
+
+
   async create(data: Prisma.CheckInUncheckedCreateInput) {
     const checkIn = {
       id: randomUUID(),
