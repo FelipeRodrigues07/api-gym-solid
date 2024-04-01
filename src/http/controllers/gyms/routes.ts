@@ -8,8 +8,8 @@ import { search } from '@/http/controllers/gyms/search'
 export async function gymsRoutes(app: FastifyInstance) {
     app.addHook('onRequest', verifyJwt)//todas as rotas que tiver daqui para baixo, vão chamar nosso middlewares, somente usuarios autenticados
 
-    app.post('/gyms/search', search)
-    app.post('/gyms/nearby', nearby)
+    app.get('/gyms/search', search)
+    app.get('/gyms/nearby', nearby)
 
     app.post('/gyms', create)
   }
