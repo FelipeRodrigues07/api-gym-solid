@@ -3,12 +3,14 @@ import { register } from '@/http/controllers/users/register'
 import { authenticate } from '@/http/controllers/users/authenticate'
 import { profile } from '@/http/controllers/users/profile'
 import { verifyJwt } from '@/http/middlewares/verify-jwt'
+import { refresh } from './refresh'
 
 export async function  usersRoutes(app: FastifyInstance) {
   app.post('/users', register)
 
   app.post('/sessions', authenticate) //seção de autnhenticate
 
+  app.patch('/token/refresh', refresh)//essa rota vai simplesmente pegar um token e atualizar ele, essa rota vai ser chamada quando o usuário não tiver mais autenticado, qundo o token não for mais valido
 
     /** Authenticated */ //essas rotas so vai ser chamada se tive autenticada
   app.get('/me', { onRequest: [verifyJwt] }, profile)  //esse on request executa antes do nosso controler
