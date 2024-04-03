@@ -24,7 +24,9 @@ export async function authenticate(
 
 
     const token = await reply.jwtSign( //resposta, criar o novo token
-      {},
+      {
+        role: user.role,
+      },
       {
         sign: {
           sub: user.id,
@@ -33,7 +35,9 @@ export async function authenticate(
     )
 
     const refreshToken = await reply.jwtSign(//criar o refresh token
-      {},
+      {
+        role: user.role,
+      },
       {
         sign: {
           sub: user.id,
@@ -43,16 +47,16 @@ export async function authenticate(
     )
 
     return reply
-    .setCookie('refreshToken', refreshToken, {  //e o refresh token vai enviar pelo cokies
-      path: '/',//todo nosso backend pode ver o valor desse cokie 
-      secure: true,//vai ser encriptado https
-      sameSite: true,//so vai ser acessivel dentro do mesmo dominio, do site
-      httpOnly: true,//so vai ser conseguido acessar pelo backend da nossa aplicação
-    })
-    .status(200)
-    .send({
-      token,
-    })
+      .setCookie('refreshToken', refreshToken, {  //e o refresh token vai enviar pelo cokies
+        path: '/',//todo nosso backend pode ver o valor desse cokie 
+        secure: true,//vai ser encriptado https
+        sameSite: true,//so vai ser acessivel dentro do mesmo dominio, do site
+        httpOnly: true,//so vai ser conseguido acessar pelo backend da nossa aplicação
+      })
+      .status(200)
+      .send({
+        token,
+      })
 
 
 
@@ -64,5 +68,5 @@ export async function authenticate(
     throw err
   }
 
-  
+
 }

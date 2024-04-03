@@ -6,8 +6,10 @@ export async function refresh(request: FastifyRequest, reply: FastifyReply) {
 //com o refresh token válido
 //vai gerar um novo token
 
+const { role } = request.user
+
   const token = await reply.jwtSign(
-    {},
+    { role },
     {
       sign: {
         sub: request.user.sub,//dados do usuário logado atualmente
@@ -16,7 +18,7 @@ export async function refresh(request: FastifyRequest, reply: FastifyReply) {
   )
 
   const refreshToken = await reply.jwtSign(
-    {},
+    { role },
     {
       sign: {
         sub: request.user.sub,
